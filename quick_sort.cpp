@@ -1,5 +1,6 @@
 #include <iostream>
 using namespace std;
+    bool choice;
 // this function simply swaps the content
 void myswap(int *a,int *b)
 {
@@ -12,16 +13,26 @@ int divide(int *a,int p,int q) // partitions the array and returns pivot point t
     int i=p,x=a[p];
     for(int j=p+1;j<=q;j++)
     {
-        if(a[j]<=x)
+        if(choice)                      //If choose for ascending order
+       {
+           if(a[j]<=x)
+            {
+                i=i+1;
+                myswap(&a[i],&a[j]);// swaping the content
+            }
+       }
+        else
         {
-            i=i+1;
-            myswap(&a[i],&a[j]);            // swaping the content
+            if(a[j]>=x)                 // If choose for descending order
+            {
+                i=i+1;
+                myswap(&a[i],&a[j]);// swaping the content
+            }
         }
-    }
     myswap(&a[p],&a[i]);                    // swaping the pivot to correct position
     return i;                               // returning the index of pivot element
 }
-
+}
 void quicksort(int *a, int p, int q)
 {
     if(p<q)
@@ -41,9 +52,11 @@ int main()
     for(i=0;i<n;i++)                            // taking in the array input
         cin>>a[i];
         cout<<endl;
+        cout<<"Press 0 to sort in descending order and 1 to sort in ascending order:  ";
+        cin>>choice;                            // a variable to choose between order of sorting(Ascending/Descending)
+        quicksort(a,0,n-1);
         cout<<"THE FINAL SORTED ARRAY IS AS FOLLOWS:"<<endl;
-    quicksort(a,0,n-1);                         // call to the quicksort function
-    for(i=0;i<n;i++)                            // loop for printing the sorted array
-        cout<<a[i]<<"  ";
+        for(i=0;i<n;i++)                        // Printing the final sorted array
+            cout<<a[i]<<" ";
     return 0;
 }
