@@ -1,0 +1,12 @@
+STEPS- Define all 6 layers viz UI, Bean, Service, Dbutil, DAO, Exception
+Start defining bean class where it should only contain getters, setters and constructors which is used to initialize the data members which are all private. Bean class should not make calls to any other class's object.
+Define custom exception class
+Create UI class in which first of all create objects of bean class and service class now take whatever inputs we want from user and pass it to bean class setter methods using bean object after this call service method to add into database.(which should be inscribed under try block as here we might get exception).
+Define interface of service package for inserting data into database.
+Implement above interface using a service class (can throw exception).
+Create DAO object in service class and make call to method in DAO which is adding data to database.
+Now define interface and class inside DAO class where interface is implemented by the class( here the method will also be able to throw exception).
+Start dao class definition by calling DBUtil for making connection.
+Define DBUtil class in which just perform connection using try and catch block & return boolean status.
+If boolean status comes as true then perform all the insertion work using preparedstatement in DAO class.
+Create IQUERRYMAPPER interface for putting all the hardcoded queries where they are stored in static & final type variable so that they cant get changed.
