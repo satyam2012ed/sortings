@@ -1,0 +1,99 @@
+create table electricity_consumer(
+consumerno number(8) primary key,
+consumername varchar2(20) not null,
+emailid varchar2(35),
+unitsconsumed number);
+
+create table electricity_bill(
+billno number primary key,
+consumerno number,
+billamount number,
+billpaiddate date,
+foreign key (consumerno) references electricity_consumer(consumerno));
+
+
+insert into electricity_consumer values (1001,'Seema Joshi','Seemajoshi@gmail.com',250);
+insert into electricity_consumer values (1002,'Amey Joshi','Amey.j@cg.com',345);
+insert into electricity_consumer values (1003,'Pravin','Pravin.t@cg.com',457);
+insert into electricity_consumer values (1004,'Manoj Kulkarni','manoj@gmail.com',780);
+insert into electricity_consumer values (1005,'Shrikant Shinde','shrikant.shinde@gmailc.om',90);
+insert into electricity_consumer values (1006,'Mahesh B','bMahesh@yahoo.com',720);
+
+
+
+insert into electricity_bill values (101,1001,440.45,'25-MAY-2017');
+insert into electricity_bill values (102,1002,690,'02-JUN-2017');
+insert into electricity_bill values (103,1001,675,'05-AUG-2017');
+insert into electricity_bill values (104,1004,678,'05-AUG-2017');
+insert into electricity_bill values (105,1005,643,'08-JAN-2017');
+insert into electricity_bill values (106,1004,900,'08-FEB-2017');
+insert into electricity_bill values (107,1003,842,'12-MAY-2017');
+insert into electricity_bill values (108,1002,421,'18-SEP-2017');
+insert into electricity_bill values (109,1005,346,'20-AUG-2017');
+insert into electricity_bill values (110,1005,342,'26-JULY-2017');
+
+
+create sequence BillID_Seq START WITH 111;
+
+
+
+Q1----
+
+create or replace procedure total_bill (cno in number)
+as
+bill number;
+units number;
+bno number;
+x number;
+cus_not_exist EXCEPTION;
+begin
+select consumerno into x from electricity_consumer where consumerno=cno;
+if x is null then
+raise cus_not_exist;
+end if;
+select unitsconsumed into units from electricity_consumer where consumerno=cno;
+if units > 100 then
+bill := (100*2.96) + (units-100)*5.56;
+else
+bill := 2.96*units;
+end if;
+select BillID_Seq.nextval into bno from dual;
+insert into electricity_bill values (bno,cno,bill,sysdate);
+exception
+when cus_not_exist then
+dbms_output.put_line('Consumer Does not Exist');
+end;
+
+exec total_bill(1005);
+
+
+-----Q2-1
+select consumerno,consumername 
+from electricity_consumer
+where unitsconsumed = (
+select max(unitsconsumed) from electricity_consumer);
+
+----Q2-2
+select consumerno
+from electricity_bill
+group by consumerno
+having count(billpaiddate) > 1;
+
+
+------Q2-3
+select consumername 
+from electricity_consumer
+where consumerno in (
+select distinct consumerno from electricity_bill
+where to_char(billpaiddate,'dd') > 15);
+
+
+
+----Q3
+alter table electricity_consumer
+add billpaymentdate date;
+alter table electricity_consumer
+add billduedate date;
+
+alter table electricity_consumer
+add constraint billpaymentduedate check (billduedate between billpaymentdate and (billpaymentdate+7));
